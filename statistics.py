@@ -10,7 +10,7 @@ def descriptive_statistics(data, selected_city):
     data_city['timestamp'] = pd.to_datetime(data_city ['timestamp'])
     data_city = data_city.sort_values('timestamp')
     
-    desc = data.groupby('season')['temperature'].describe()
+    desc = data_city.groupby('season')['temperature'].describe()
     st.write(desc)
 
     st.subheader('Распределение температур')
