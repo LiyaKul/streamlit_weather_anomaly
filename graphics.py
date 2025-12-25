@@ -2,10 +2,10 @@ import plotly.graph_objects as go
 import streamlit as st
 
 def seasons_distribution(data_city, selected_city):
-    data_city['day_in_season'] = data_city.groupby(['season', 'year']).cumcount() + 1
+    data_city['season_day'] = data_city.groupby(['season', 'year']).cumcount() + 1
     seas_d = (
         data_city
-        .groupby(['season', 'day_in_season'])['temperature']
+        .groupby(['season', 'season_day'])['temperature']
         .agg(mean='mean', std='std', count='count')
         .reset_index()
     )
@@ -13,7 +13,7 @@ def seasons_distribution(data_city, selected_city):
     seas_d['upper'] = seas_d['mean'] + 2 * seas_d['std']
     seas_d['lower'] = seas_d['mean'] - 2 * seas_d['std']
 
-    available_seasons = ['winter', 'spring', 'summer', 'autumn']
+    available_seasons = data_city['season'].unique().tolist()
 
     selected_season = st.selectbox(
         'Выберите сезон',
@@ -24,24 +24,24 @@ def seasons_distribution(data_city, selected_city):
 
     fig = go.Figure()
 
-    seas_d_copy = seas_d[seas_d['season'] == selected_season].sort_values('day_in_season').copy()
+    seas_d_copy = seas_d[seas_d['season'] == selected_season].sort_values('season_day').copy()
 
     fig.add_trace(go.Scatter(
-        x=seas_d_copy['day_in_season'],
+        x=seas_d_copy['season_day'],
         y=seas_d_copy['mean'],
         mode='lines',
         name='Mean'
     ))
 
     fig.add_trace(go.Scatter(
-        x=seas_d_copy['day_in_season'],
+        x=seas_d_copy['season_day'],
         y=seas_d_copy['upper'],
         mode='lines',
         name='+2σ'
     ))
 
     fig.add_trace(go.Scatter(
-        x=seas_d_copy['day_in_season'],
+        x=seas_d_copy['season_day'],
         y=seas_d_copy['lower'],
         mode='lines',
         name='-2σ',
@@ -51,7 +51,7 @@ def seasons_distribution(data_city, selected_city):
     fig.update_layout(
         xaxis_title='День сезона',
         yaxis_title='Температура (°C)',
-        title='Seasonal profile (mean ± std)'
+        title='Сезонный профиль (среднее ± 2σ)'
     )
 
     st.plotly_chart(fig, width='stretch')
@@ -83,7 +83,7 @@ def mean_and_std(data_city):
   ))
 
   fig.update_layout(
-      title='Mean и интервал неаномальных значений (±2σ)',
+      title='Среднее и интервал неаномальных значений (±2σ)',
       xaxis_title='Дата',
       yaxis_title='Температура (°C)'
   )
@@ -122,7 +122,7 @@ def draw_anomaly(data_city, selected_city):
     fig.update_layout(
         xaxis_title='Date',
         yaxis_title='Temperature (°C)',
-        title=f'Temperature time series — {selected_city}'
+        title=f'Аномальные значения — {selected_city}'
     )
 
     st.plotly_chart(fig, width='stretch')

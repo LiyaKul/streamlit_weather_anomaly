@@ -6,9 +6,6 @@ from graphics import *
 def descriptive_statistics(data, selected_city):
     st.subheader('Описательная статистика')
     data_city = data[data['city'] == selected_city].copy()
-    data_city = data_city.dropna(subset=['timestamp', 'temperature'])
-    data_city['timestamp'] = pd.to_datetime(data_city ['timestamp'])
-    data_city = data_city.sort_values('timestamp')
     
     desc = data_city.groupby('season')['temperature'].describe()
     st.write(desc)

@@ -17,13 +17,13 @@ def process_data(data):
 def preprocess_data(data):
     data['temperature'] = pd.to_numeric(data['temperature'])
     data['timestamp'] = pd.to_datetime(data['timestamp'], format='%Y-%m-%d')
-    
-    data = data.sort_values(['city', 'timestamp']).reset_index(drop=True)
 
     data['month'] = data['timestamp'].dt.month
     data['day'] = data['timestamp'].dt.day
     data['year'] = data['timestamp'].dt.year
     data['timestamp'] = data['timestamp'].dt.date
+
+    data = data.sort_values(['city', 'timestamp']).reset_index(drop=True)
 
     data['mean'] = data.groupby(['city', 'season'])['temperature'].transform(rolling_mean)
     data['sigma'] = data.groupby(['city', 'season'])['temperature'].transform(rolling_std)

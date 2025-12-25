@@ -38,4 +38,4 @@ if uploaded_file is not None:
         placeholder='API key'
     )
 
-    get_city_temp(selected_city, api_key, data)
+    check_anomaly(selected_city, api_key, data)

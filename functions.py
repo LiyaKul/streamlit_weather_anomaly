@@ -15,7 +15,7 @@ def get_temperature_by_city(api_key, city, client):
       return response
   
 
-def get_city_temp(selected_city, api_key, data):
+def check_anomaly(selected_city, api_key, data):
     day = datetime.now().day
     month = datetime.now().month
     st.subheader(f'Температура для {selected_city} {datetime.now()}')
@@ -24,7 +24,6 @@ def get_city_temp(selected_city, api_key, data):
         if isinstance(temp, float):
             st.write(f"Температура для {selected_city} = {temp}°C")
             mean_temp_and_std_by_day = (data.groupby(['city', 'month', 'day'])['temperature'].agg(['mean', 'std']).reset_index())
-
 
             day_temp = mean_temp_and_std_by_day[
                 (mean_temp_and_std_by_day['city'] == selected_city) & 
